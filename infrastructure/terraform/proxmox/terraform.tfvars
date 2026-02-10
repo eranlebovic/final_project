@@ -1,5 +1,0 @@
-proxmox_api_url          = "https://100.91.241.119:8006/" # Note: End with /
-proxmox_api_token_id     = "root@pam!terraform"
-proxmox_api_token_secret = "28a683d1-a0c2-401e-af5c-8a50cf86b730"
-
-ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCy8t5L45xF+jylLj7Qba8A/2tSgQkCUnobrvHwHVdHXNaqroooc1yEjcb9gjorS1zocYRy98yAIeyf5eWpDW5yMEmXDfW5pK3Ee+TMZ+f4pP8rEfYX2Owv7aoUVu6NAYJIyxQ6xc8CwLjRmC7RHcgzdsqSkuAHE1PNtiMb/c6Cs1p3C0HSrnthpUrDgJjG+nil62cgWYKQgGn7W6x9FRE/fe4RWVUTBYru5n366dEaL+YcgicYEW2bT3iTC8Q76gh16FlP2n6M7Kc+u0WnIVBWYAIslX5roSSbXZjo3ZhUaf+ljkyiLX5DhmArRSuRE4zYVqddTqzn68qHkWRT2QUGBX/ORAKQTquEiA1CiB6s8Mzqg5dOqg5Q3SGsWy4r6HwMmtpbrbJMG3ONf6qdYPRwc1nkHriCz/GBWDOor0RsC9Zbla3hKmNOHfdfE2LttRuWmf0IjsBWE7845BquE05y4QVT4gMEnYEljoHqiWkvNteVQTkgkmCTDIxyjpavyEWHLYJG8c7lNzlbp9S5+rjKsscQcwUpJLeb9Wtr3QPNIPWly65lnz+4D3wmEg/obXW0AWhIiaa0jucMY0Kq3VCnrbp+IYTtH5JsnYXAnFaqQIpyrxfZ3orkaxRh3NzuaMMuEQL6Ln/Xqj9D1/ovF5K2po6dhkNUIo2cRENw+9yO8Q== raich@DESKTOP-F078NRM"

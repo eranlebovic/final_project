@@ -1,0 +1,16 @@
+# Ignore Terraform State & Secrets
+**/.terraform/*
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# Ignore SSH Keys
+id_rsa_terraform
+*.pem
+
+# Ignore Ansible Retry Files
+*.retry
+
+# Ignore OS files
+.DS_Store
