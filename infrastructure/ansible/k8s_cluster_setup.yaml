@@ -1,0 +1,79 @@
+---
+- name: Initialize Kubernetes Master
+  hosts: masters
+  become: yes
+  vars:
+    # We use a Pod Network CIDR that DOES NOT conflict with your home network (192.168.1.x)
+    pod_network_cidr: "10.244.0.0/16"
+  
+  tasks:
+    - name: Check if Kubernetes is already initialized
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: kube_admin_conf
+
+    - name: Initialize the Kubernetes Cluster using Kubeadm
+      command: >
+        kubeadm init
+        --apiserver-advertise-address={{ ansible_host }}
+        --pod-network-cidr={{ pod_network_cidr }}
+      when: not kube_admin_conf.stat.exists
+      register: kubeadm_init_output
+
+    - name: Create .kube directory for ubuntu user
+      file:
+        path: /home/ubuntu/.kube
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: 0755
+
+    - name: Copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+        group: ubuntu
+
+    - name: Download Calico Networking Manifest
+      get_url:
+        url: https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
+        dest: /tmp/calico.yaml
+
+    # We patch Calico to match our specific CIDR (10.244.0.0/16)
+    - name: Update Calico CIDR to match Kubeadm
+      replace:
+        path: /tmp/calico.yaml
+        regexp: '192.168.0.0/16'
+        replace: "{{ pod_network_cidr }}"
+
+    - name: Apply Calico Networking
+      become: yes
+      become_user: ubuntu
+      command: kubectl apply -f /tmp/calico.yaml
+      # Only run if we just initialized, or force it if needed.
+      when: not kube_admin_conf.stat.exists or kubeadm_init_output.changed
+
+    - name: Get the Join Command
+      command: kubeadm token create --print-join-command
+      register: join_command_raw
+
+    - name: Set Join Command as Fact
+      set_fact:
+        join_command: "{{ join_command_raw.stdout }}"
+      delegate_to: localhost
+      # This allows us to use this variable in the next play (workers)
+
+- name: Join Workers to the Cluster
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Check if node is already joined
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: kubelet_conf
+
+    - name: Join the Worker Node
+      command: "{{ hostvars['k8s-master']['join_command'] }}"
+      when: not kubelet_conf.stat.exists

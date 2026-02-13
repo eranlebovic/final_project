@@ -1,4 +1,19 @@
-# Ignore Terraform State & Secrets
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# Python / Virtual Environments
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Diagrams / OS
+.DS_Store
+*.log# Ignore Terraform State & Secrets
 **/.terraform/*
 *.tfstate
 *.tfstate.backup

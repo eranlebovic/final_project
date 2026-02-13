@@ -1,0 +1,50 @@
+nohup: ignoring input
+👀 Watcher started: Monitoring generate_architecture.py...
+Setting up watches.
+Watches established.
+[H[2J[3J[1;33m[ PROCESSING ] Generating new architecture... [0m
+Traceback (most recent call last):
+  File "/opt/final_project/generate_architecture.py", line 15, in <module>
+    with Diagram("Ultimate DevSecOps Platform Architecture", show=False, graph_attr=graph_attr):
+  File "/opt/final_project/venv/lib/python3.12/site-packages/diagrams/__init__.py", line 167, in __exit__
+    os.remove(self.filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ultimate_devsecops_platform_architecture'
+[1;31m[ ERROR ] Diagram generation failed![0m
+Waiting for next change...
+[H[2J[3J[1;33m[ PROCESSING ] Generating new architecture... [0m
+[1;32m
+##########################################################
+#                                                        #
+#   🔔  ALARM: ARCHITECTURE SKETCH UPDATED!              #
+#                                                        #
+##########################################################
+Timestamp: 2026-02-11 17:32:30
+[0m
+Waiting for next change...
+[H[2J[3J[1;33m[ PROCESSING ] Generating new architecture... [0m
+Traceback (most recent call last):
+  File "/opt/final_project/generate_architecture.py", line 15, in <module>
+    with Diagram("Ultimate DevSecOps Platform Architecture", show=False, graph_attr=graph_attr):
+  File "/opt/final_project/venv/lib/python3.12/site-packages/diagrams/__init__.py", line 167, in __exit__
+    os.remove(self.filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ultimate_devsecops_platform_architecture'
+[1;31m[ ERROR ] Diagram generation failed![0m
+Waiting for next change...
+[H[2J[3J[1;33m[ PROCESSING ] Generating new architecture... [0m
+Traceback (most recent call last):
+  File "/opt/final_project/generate_architecture.py", line 15, in <module>
+    with Diagram("Ultimate DevSecOps Platform Architecture", show=False, graph_attr=graph_attr):
+  File "/opt/final_project/venv/lib/python3.12/site-packages/diagrams/__init__.py", line 167, in __exit__
+    os.remove(self.filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ultimate_devsecops_platform_architecture'
+[1;31m[ ERROR ] Diagram generation failed![0m
+Waiting for next change...
+[H[2J[3J[1;33m[ PROCESSING ] Generating new architecture... [0m
+Traceback (most recent call last):
+  File "/opt/final_project/generate_architecture.py", line 15, in <module>
+    with Diagram("Ultimate DevSecOps Platform Architecture", show=False, graph_attr=graph_attr):
+  File "/opt/final_project/venv/lib/python3.12/site-packages/diagrams/__init__.py", line 167, in __exit__
+    os.remove(self.filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ultimate_devsecops_platform_architecture'
+[1;31m[ ERROR ] Diagram generation failed![0m
+Waiting for next change...

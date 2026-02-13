@@ -1,6 +1,6 @@
 # --- K8s Cluster Nodes ---
 resource "proxmox_virtual_environment_vm" "k8s_nodes" {
-  count     = 3 # Change this to 4 when you are ready to add a node!
+  count     = 4 # Change this to 4 when you are ready to add a node!
   name      = count.index == 0 ? "k8s-master" : "k8s-worker-0${count.index}"
   node_name = "pve"
   vm_id     = 200 + count.index

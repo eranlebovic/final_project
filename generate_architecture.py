@@ -1,82 +1,67 @@
 from diagrams import Cluster, Diagram, Edge
 from diagrams.onprem.compute import Server
-from diagrams.onprem.container import Docker
-from diagrams.onprem.database import Mongodb, Postgresql
-from diagrams.onprem.inmemory import Redis
-from diagrams.onprem.monitoring import Grafana, Prometheus
-from diagrams.onprem.network import Nginx, Haproxy
+from diagrams.onprem.network import Internet
 from diagrams.onprem.vcs import Github
-from diagrams.onprem.ci import Jenkins
-from diagrams.onprem.gitops import Argocd  # Corrected Import Path
-from diagrams.onprem.iac import Terraform
-from diagrams.aws.storage import S3
-from diagrams.aws.network import Route53
+from diagrams.k8s.controlplane import API, CM, Scheduler
+from diagrams.k8s.infra import Node
 from diagrams.k8s.compute import Pod
 
-# Attributes for the diagram
+# Define the diagram attributes
 graph_attr = {
-    "fontsize": "20",
+    "fontsize": "25",
     "bgcolor": "white"
 }
 
-with Diagram("Ultimate DevSecOps Platform Architecture", show=False, direction="LR", graph_attr=graph_attr):
+with Diagram("Ultimate DevSecOps Platform Architecture", show=False, graph_attr=graph_attr):
 
-    with Cluster("Developer Workstation (Windows)"):
-        dev = Server("You")
-        tf = Terraform("IaC Code")
+    internet = Internet("Internet")
+    github = Github("GitHub Repo\n(CI/CD Config)")
+
+    with Cluster("Home Network (192.168.1.x)"):
         
-    with Cluster("AWS Cloud (Free Tier)"):
-        dns = Route53("DNS Zone")
-        tf_state = S3("Terraform State")
+        # Jump Host (Your Control Center)
+        # Using .244 based on your recent nmap scan
+        jumphost = Server("Jump Host\n100.103.55.39")
 
-    with Cluster("CI/CD Pipeline"):
-        git = Github("Git Repo")
-        ci = Jenkins("CI Server")
-        registry = Docker("Image Registry")
-        gitops = Argocd("ArgoCD")
-
-    with Cluster("Proxmox Home Lab (Ryzen 9 9950x)"):
-        
-        with Cluster("Kubernetes Cluster"):
-            monitor = Prometheus("Prometheus")
-            viz = Grafana("Grafana")
+        with Cluster("Proxmox Virtual Environment"):
             
-            with Cluster("Ingress Layer"):
-                # Using Haproxy to represent Load Balancer
-                lb = Haproxy("MetalLB") 
-                ingress = Nginx("Ingress Controller")
+            # Kubernetes Cluster
+            with Cluster("Kubernetes Cluster (v1.29)"):
+                
+                # Master Node
+                with Cluster("Master Node\n192.168.1.164"):
+                    master = API("Kube-API")
+                    cm = CM("Controller\nManager")
+                    sched = Scheduler("Scheduler")
+                    
+                    # Master Components Talk to Each Other
+                    master - Edge(color="blue", style="dotted") - cm
+                    master - Edge(color="blue", style="dotted") - sched
 
-            with Cluster("Microservices Tier"):
-                fe = Pod("Frontend")
-                be = Pod("Backend API")
-                auth = Pod("Auth Service")
+                # Worker Nodes
+                with Cluster("Worker Nodes"):
+                    worker1 = Node("Worker-01\n.129")
+                    worker2 = Node("Worker-02\n.142")
+                    worker3 = Node("Worker-03\n.134")
+                    
+                    workers = [worker1, worker2, worker3]
 
-            with Cluster("Data Persistence"):
-                db_sql = Postgresql("PostgreSQL")
-                db_nosql = Mongodb("MongoDB")
-                cache = Redis("Redis")
+    # --- Connections ---
 
-    # Workflow Connections
-    dev >> Edge(label="Push Code") >> git
-    dev >> Edge(label="Provision") >> tf
-    tf >> Edge(label="State Store") >> tf_state
+    # 1. External Access
+    internet >> Edge(label="Git Push") >> github
+    github >> Edge(label="Pull Playbooks") >> jumphost
+
+    # 2. Jump Host Management (Ansible Control)
+    # This line creates a red arrow to all three workers at once
+    jumphost >> Edge(label="Ansible (SSH)", color="red") >> workers
+    jumphost >> Edge(label="Ansible (SSH)", color="red") >> master
     
-    # CI Flow
-    git >> Edge(label="Trigger") >> ci
-    ci >> Edge(label="Build & Scan") >> registry
-    
-    # CD Flow
-    gitops >> Edge(label="Watch") >> git
-    gitops >> Edge(label="Sync") >> ingress
+    # 3. Kubectl Control
+    jumphost >> Edge(label="kubectl (API)", color="green") >> master
 
-    # User Traffic Flow
-    user_traffic = Edge(color="firebrick", style="dashed")
-    dns >> user_traffic >> lb >> user_traffic >> ingress
-    ingress >> user_traffic >> fe
-    fe >> user_traffic >> be
-    be >> user_traffic >> db_sql
-    be >> user_traffic >> cache
-
-    # Monitoring
-    monitor >> Edge(style="dotted") >> [fe, be, db_sql]
-    viz >> monitor
+    # 4. Cluster Communication (Master to Workers)
+    master >> Edge(label="Kubelet Control", color="blue") >> workers
+# Last updated: Wed Feb 11 05:04:55 PM UTC 2026
+# Last updated: Wed Feb 11 05:06:10 PM UTC 2026
+# Last updated: Wed Feb 11 05:12:51 PM UTC 2026
