@@ -4,64 +4,50 @@ from diagrams.onprem.network import Internet
 from diagrams.onprem.vcs import Github
 from diagrams.k8s.controlplane import API, CM, Scheduler
 from diagrams.k8s.infra import Node
-from diagrams.k8s.compute import Pod
+from diagrams.k8s.compute import Pod, Deployment
+from diagrams.k8s.network import Service
+from diagrams.k8s.podconfig import Secret
+from diagrams.onprem.inmemory import Redis  # <-- Fixed: Redis is 'inmemory'
 
-# Define the diagram attributes
 graph_attr = {
     "fontsize": "25",
     "bgcolor": "white"
 }
 
 with Diagram("Ultimate DevSecOps Platform Architecture", show=False, graph_attr=graph_attr):
-
     internet = Internet("Internet")
-    github = Github("GitHub Repo\n(CI/CD Config)")
+    github = Github("GitHub Repo")
 
     with Cluster("Home Network (192.168.1.x)"):
-        
-        # Jump Host (Your Control Center)
-        # Using .244 based on your recent nmap scan
-        jumphost = Server("Jump Host\n100.103.55.39")
+        jumphost = Server("Jump Host\n192.168.1.244")
 
         with Cluster("Proxmox Virtual Environment"):
-            
-            # Kubernetes Cluster
             with Cluster("Kubernetes Cluster (v1.29)"):
-                
-                # Master Node
                 with Cluster("Master Node\n192.168.1.164"):
-                    master = API("Kube-API")
-                    cm = CM("Controller\nManager")
-                    sched = Scheduler("Scheduler")
-                    
-                    # Master Components Talk to Each Other
-                    master - Edge(color="blue", style="dotted") - cm
-                    master - Edge(color="blue", style="dotted") - sched
+                    master_api = API("Kube-API")
+                    master_comp = [CM("Controller"), Scheduler("Sched")]
 
-                # Worker Nodes
                 with Cluster("Worker Nodes"):
-                    worker1 = Node("Worker-01\n.129")
-                    worker2 = Node("Worker-02\n.142")
-                    worker3 = Node("Worker-03\n.134")
+                    workers = [Node("Worker-01\n.129"), 
+                               Node("Worker-02\n.142"), 
+                               Node("Worker-03\n.134")]
+
+                with Cluster("Application Workloads"):
+                    # Showing 3 replicas for HA across workers
+                    frontend = [Pod("UI-1"), Pod("UI-2"), Pod("UI-3")]
+                    backend = [Pod("API-1"), Pod("API-2"), Pod("API-3")]
+                    db = Redis("Redis DB")
                     
-                    workers = [worker1, worker2, worker3]
+                    fe_svc = Service("NodePort:30002")
+                    be_svc = Service("NodePort:30001")
+                    cred = Secret("Redis-Secret")
 
-    # --- Connections ---
-
-    # 1. External Access
-    internet >> Edge(label="Git Push") >> github
-    github >> Edge(label="Pull Playbooks") >> jumphost
-
-    # 2. Jump Host Management (Ansible Control)
-    # This line creates a red arrow to all three workers at once
-    jumphost >> Edge(label="Ansible (SSH)", color="red") >> workers
-    jumphost >> Edge(label="Ansible (SSH)", color="red") >> master
+    # Flow
+    internet >> Edge(label="HTTPS") >> fe_svc >> frontend
+    frontend >> Edge(label="API Call") >> be_svc >> backend
+    backend >> Edge(label="Read/Write") >> db
+    backend >> Edge(label="Auth", style="dashed") >> cred
     
-    # 3. Kubectl Control
-    jumphost >> Edge(label="kubectl (API)", color="green") >> master
-
-    # 4. Cluster Communication (Master to Workers)
-    master >> Edge(label="Kubelet Control", color="blue") >> workers
-# Last updated: Wed Feb 11 05:04:55 PM UTC 2026
-# Last updated: Wed Feb 11 05:06:10 PM UTC 2026
-# Last updated: Wed Feb 11 05:12:51 PM UTC 2026
+    # Management
+    jumphost >> Edge(label="kubectl", color="green") >> master_api
+    master_api >> Edge(label="Control", color="blue") >> workers

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-ui
+  namespace: default
+  labels:
+    app: frontend-ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend-ui
+  template:
+    metadata:
+      labels:
+        app: frontend-ui
+    spec:
+      containers:
+      - name: frontend-ui
+        image: eranlebovic/frontend-ui:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80

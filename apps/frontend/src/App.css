@@ -1,0 +1,6 @@
+body { background-color: #1a1a1a; color: white; font-family: sans-serif; }
+.container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+.card { background: #2a2a2a; padding: 2rem; border-radius: 15px; text-align: center; border: 1px solid #444; }
+.counter-value { font-size: 5rem; color: #646cff; margin: 1rem 0; }
+button { background: #646cff; color: white; border: none; padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; }
+.error { color: #ff5555; font-weight: bold; }
