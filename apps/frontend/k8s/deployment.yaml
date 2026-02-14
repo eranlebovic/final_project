@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: frontend-ui
-        image: eranlebovic/frontend-ui:v1
+        image: eranlebovic/frontend-ui:v${BUILD_NUMBER}
         imagePullPolicy: Always
         ports:
         - containerPort: 80

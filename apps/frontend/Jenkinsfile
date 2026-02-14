@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // CHANGE 1: Name the image for the Frontend
-        DOCKER_IMAGE = "eranlebovic/frontend-app"
+        DOCKER_IMAGE = "eranlebovic/frontend-ui"
         IMAGE_TAG = "v${BUILD_NUMBER}"
         DOCKER_CREDS = "docker-hub-credentials"
     }
