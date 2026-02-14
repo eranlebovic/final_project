@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // CHANGE 1: Name the image for the Frontend
+        // Correct image name for your cluster
         DOCKER_IMAGE = "eranlebovic/frontend-ui"
         IMAGE_TAG = "v${BUILD_NUMBER}"
         DOCKER_CREDS = "docker-hub-credentials"
@@ -18,23 +18,56 @@ pipeline {
         stage('Build Frontend Image') {
             steps {
                 script {
-                    // CHANGE 2: Enter the Frontend directory
                     dir('apps/frontend') {
                         echo "Building ${DOCKER_IMAGE}:${IMAGE_TAG}..."
-                        // This uses the Dockerfile inside apps/frontend
                         docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
                     }
                 }
             }
         }
 
+        // STEP 1: PUSH THE IMAGE (Do this first!)
         stage('Push to Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('', DOCKER_CREDS) {
                         sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                        // It is good practice to push 'latest' too
                         sh "docker tag ${DOCKER_IMAGE}:${IMAGE_TAG} ${DOCKER_IMAGE}:latest"
                         sh "docker push ${DOCKER_IMAGE}:latest"
+                    }
+                }
+            }
+        }
+
+        // STEP 2: UPDATE MANIFEST (Do this last)
+        stage('Update Manifest') {
+            steps {
+                script {
+                    // Configure Git Identity
+                    sh "git config user.email 'jenkins@example.com'"
+                    sh "git config user.name 'Jenkins CI'"
+                    
+                    // Go into the k8s folder
+                    dir('apps/frontend/k8s') {
+                        
+                        // checkout main branch to ensure we aren't in 'detached HEAD' state
+                        // (Optional but recommended if you encounter git errors)
+                        // sh "git checkout main"
+                        // sh "git pull origin main"
+
+                        // Replace the tag
+                        sh "sed -i 's|image: .*/frontend-ui:.*|image: eranlebovic/frontend-ui:v${BUILD_NUMBER}|' deployment.yaml"
+                        
+                        // Check the change
+                        sh "cat deployment.yaml" 
+                        
+                        // Commit & Push with [skip ci]
+                        sh """
+                            git add deployment.yaml
+                            git commit -m 'Update frontend image to v${BUILD_NUMBER} [skip ci]'
+                            git push origin main
+                        """
                     }
                 }
             }
