@@ -13,7 +13,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Pulls code from your GitHub repo
                 checkout scm
             }
         }
@@ -21,10 +20,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // THE FIX: "Step into" the backend folder before building
                     dir('apps/backend') {
                         echo "Building ${DOCKER_IMAGE}:${IMAGE_TAG} from apps/backend..."
-                        // Now docker.build sees the Dockerfile in the current folder (.)
                         docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
                     }
                 }
@@ -34,16 +31,43 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Log in to Docker Hub using the secure token
                     docker.withRegistry('', DOCKER_CREDS) {
-                        echo "Pushing image to Docker Hub..."
-                        
-                        // Push the specific version (v1, v2...)
                         sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
-                        
-                        // Tag it as 'latest' and push that too
                         sh "docker tag ${DOCKER_IMAGE}:${IMAGE_TAG} ${DOCKER_IMAGE}:latest"
                         sh "docker push ${DOCKER_IMAGE}:latest"
+                    }
+                }
+            }
+        }
+
+        // --- NEW GITOPS STAGE ---
+        stage('Update Manifest') {
+            steps {
+                script {
+                    // Use the same GitHub credentials we created earlier
+                    def GITHUB_CRED_ID = 'github-credentials' 
+                    
+                    withCredentials([usernamePassword(credentialsId: GITHUB_CRED_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+                        
+                        sh "git config user.email 'jenkins@example.com'"
+                        sh "git config user.name 'Jenkins CI'"
+                        
+                        // CRITICAL: We go into the BACKEND k8s folder
+                        dir('apps/backend/k8s') {
+                            
+                            // 1. Update the deployment.yaml with the new tag
+                            // We look for the image name 'eranlebovic/backend-api' and replace the tag
+                            sh "sed -i 's|image: .*/backend-api:.*|image: eranlebovic/backend-api:v${BUILD_NUMBER}|' deployment.yaml"
+                            
+                            // 2. Commit the change
+                            sh """
+                                git add deployment.yaml
+                                git commit -m 'Update backend image to v${BUILD_NUMBER} [skip ci]'
+                            """
+                            
+                            // 3. Push to GitHub
+                            sh "git push https://${GIT_USER}:${GIT_PASS}@github.com/eranlebovic/final_project.git HEAD:main"
+                        }
                     }
                 }
             }
