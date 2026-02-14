@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    environment {
+        // CHANGE 1: Name the image for the Frontend
+        DOCKER_IMAGE = "eranlebovic/frontend-app"
+        IMAGE_TAG = "v${BUILD_NUMBER}"
+        DOCKER_CREDS = "docker-hub-credentials"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Frontend Image') {
+            steps {
+                script {
+                    // CHANGE 2: Enter the Frontend directory
+                    dir('apps/frontend') {
+                        echo "Building ${DOCKER_IMAGE}:${IMAGE_TAG}..."
+                        // This uses the Dockerfile inside apps/frontend
+                        docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                    }
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('', DOCKER_CREDS) {
+                        sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                        sh "docker tag ${DOCKER_IMAGE}:${IMAGE_TAG} ${DOCKER_IMAGE}:latest"
+                        sh "docker push ${DOCKER_IMAGE}:latest"
+                    }
+                }
+            }
+        }
+    }
+}
