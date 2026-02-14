@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    environment {
+        // Your Docker Hub Image Name
+        DOCKER_IMAGE = "eranlebovic/backend-api"
+        // Creates a unique tag for every build (v1, v2, v3...)
+        IMAGE_TAG = "v${BUILD_NUMBER}"
+        // The ID we just created in the UI
+        DOCKER_CREDS = "docker-hub-credentials"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Pulls code from your GitHub repo
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Building ${DOCKER_IMAGE}:${IMAGE_TAG}..."
+                    docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    // Logs in securely using the credentials ID you just made
+                    docker.withRegistry('', DOCKER_CREDS) {
+                        sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                        
+                        // Also update 'latest' tag
+                        sh "docker tag ${DOCKER_IMAGE}:${IMAGE_TAG} ${DOCKER_IMAGE}:latest"
+                        sh "docker push ${DOCKER_IMAGE}:latest"
+                    }
+                }
+            }
+        }
+    }
+}
