@@ -6,7 +6,7 @@ pipeline {
         DOCKER_IMAGE = "eranlebovic/backend-api"
         // Creates a unique tag for every build (v1, v2, v3...)
         IMAGE_TAG = "v${BUILD_NUMBER}"
-        // The ID we just created in the UI
+        // The ID we stored in Jenkins Credentials
         DOCKER_CREDS = "docker-hub-credentials"
     }
 
@@ -21,8 +21,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "Building ${DOCKER_IMAGE}:${IMAGE_TAG}..."
-                    docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                    // THE FIX: "Step into" the backend folder before building
+                    dir('apps/backend') {
+                        echo "Building ${DOCKER_IMAGE}:${IMAGE_TAG} from apps/backend..."
+                        // Now docker.build sees the Dockerfile in the current folder (.)
+                        docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                    }
                 }
             }
         }
@@ -30,11 +34,14 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Logs in securely using the credentials ID you just made
+                    // Log in to Docker Hub using the secure token
                     docker.withRegistry('', DOCKER_CREDS) {
+                        echo "Pushing image to Docker Hub..."
+                        
+                        // Push the specific version (v1, v2...)
                         sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
                         
-                        // Also update 'latest' tag
+                        // Tag it as 'latest' and push that too
                         sh "docker tag ${DOCKER_IMAGE}:${IMAGE_TAG} ${DOCKER_IMAGE}:latest"
                         sh "docker push ${DOCKER_IMAGE}:latest"
                     }
