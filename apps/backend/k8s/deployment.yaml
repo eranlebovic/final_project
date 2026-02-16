@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: backend-api
-        image: eranlebovic/backend-api:v9
+        image: eranlebovic/backend-api:v10
         imagePullPolicy: Always                  # <--- Good for dev
         ports:
         - containerPort: 5000
