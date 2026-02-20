@@ -52,4 +52,4 @@ Configuration management is handled at multiple levels ensuring consistency:
    ```
 
 3. **Deploy Applications (GitOps)**:
-   Once Argo CD is installed on the cluster, apply the `Application` or `ApplicationSet` manifests from `kubernetes/argocd` to instruct Argo to track this repository and continuously deploy the `apps/` folders.
+   Once Argo CD is installed on the cluster, apply the `AppProject` and `Application` manifests from `apps/argocd/` to instruct Argo to track this repository and continuously deploy the `devops-dev` and `devops-prod` environments.
