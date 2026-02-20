@@ -26,6 +26,15 @@ pipeline {
             }
         }
 
+        stage('Image Scan (Trivy)') {
+            steps {
+                script {
+                    echo "Scanning image ${DOCKER_IMAGE}:${IMAGE_TAG} for vulnerabilities..."
+                    sh "trivy image --severity HIGH,CRITICAL --no-progress ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                }
+            }
+        }
+
         // STEP 1: PUSH THE IMAGE (Do this first!)
         stage('Push to Docker Hub') {
             steps {
