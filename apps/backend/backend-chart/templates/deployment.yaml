@@ -24,9 +24,15 @@ spec:
               protocol: TCP
           env:
             - name: REDIS_HOST
-              value: {{ .Values.redis.host | quote }}
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: REDIS_HOST
             - name: REDIS_PORT
-              value: {{ .Values.redis.port | quote }}
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: REDIS_PORT
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
