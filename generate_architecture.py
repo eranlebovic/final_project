@@ -56,14 +56,15 @@ with Diagram("Ultimate DevSecOps Platform Architecture", show=False, direction="
             master_api = API("Kube-API\n(Master)")
             
             # Column 3: Workloads & Nodes (Aggregated for cleanliness)
-            with Cluster("Application Workloads"):
-                fe_svc = Service("Frontend LB\n(devops-frontend)")
-                fe_pods = ReplicaSet("Frontend Pods\n(x3)")
+            with Cluster("Environments (devops-prod / devops-dev)"):
+                with Cluster("Frontend Helm Chart"):
+                    fe_svc = Service("Frontend LB\n(devops-frontend)")
+                    fe_pods = ReplicaSet("Frontend Pods\n(x3)")
                 
-                be_svc = Service("Backend LB\n(devops-backend)")
-                be_pods = ReplicaSet("Backend Pods\n(x3)")
-                
-                db = Redis("Redis DB")
+                with Cluster("Backend Helm Chart"):
+                    be_svc = Service("Backend LB\n(devops-backend)")
+                    be_pods = ReplicaSet("Backend Pods\n(x3)")
+                    db = Redis("Redis DB")
 
             with Cluster("Worker Nodes"):
                 workers = Node("K8s Workers\n(01, 02, 03)")
