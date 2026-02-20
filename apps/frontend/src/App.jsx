@@ -35,7 +35,7 @@ function App() {
     <div className="container">
       <h1>🚀 DevOps Ashdod: Final Project</h1>
       <div className="card">
-        <h2>Global Hit Counter</h2>
+        <h2>Global Hit Counter (Live ✅)</h2>
         {error ? (
           <p className="error">{error}</p>
         ) : (
