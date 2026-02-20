@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "frontend-chart.fullname" . }}
+  name: frontend-ui
   labels:
-    {{- include "frontend-chart.labels" . | nindent 4 }}
+    app: frontend-ui
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "frontend-chart.selectorLabels" . | nindent 6 }}
+      app: frontend-ui
   template:
     metadata:
       labels:
-        {{- include "frontend-chart.selectorLabels" . | nindent 8 }}
+        app: frontend-ui
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: frontend-ui
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

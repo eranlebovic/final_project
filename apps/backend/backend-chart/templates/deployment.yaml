@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "backend-chart.fullname" . }}
+  name: backend-api
   labels:
-    {{- include "backend-chart.labels" . | nindent 4 }}
+    app: backend-api
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "backend-chart.selectorLabels" . | nindent 6 }}
+      app: backend-api
   template:
     metadata:
       labels:
-        {{- include "backend-chart.selectorLabels" . | nindent 8 }}
+        app: backend-api
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: backend-api
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
