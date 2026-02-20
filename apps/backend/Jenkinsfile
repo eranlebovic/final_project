@@ -2,12 +2,16 @@ pipeline {
     agent any
 
     environment {
-        // Your Docker Hub Image Name
+        // Correct image name for your cluster
         DOCKER_IMAGE = "eranlebovic/backend-api"
-        // Creates a unique tag for every build (v1, v2, v3...)
         IMAGE_TAG = "v${BUILD_NUMBER}"
         // The ID we stored in Jenkins Credentials
         DOCKER_CREDS = "docker-hub-credentials"
+    }
+
+    triggers {
+        // Poll GitHub every minute for changes
+        pollSCM('* * * * *')
     }
 
     stages {

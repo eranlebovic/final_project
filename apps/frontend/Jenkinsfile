@@ -8,6 +8,11 @@ pipeline {
         DOCKER_CREDS = "docker-hub-credentials"
     }
 
+    triggers {
+        // Poll GitHub every minute for changes
+        pollSCM('* * * * *')
+    }
+
     stages {
         stage('Checkout') {
             steps {
