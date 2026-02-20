@@ -60,13 +60,13 @@ pipeline {
                         sh "git config user.email 'jenkins@example.com'"
                         sh "git config user.name 'Jenkins CI'"
                         
-                        dir('apps/frontend/k8s') {
+                        dir('apps/frontend/frontend-chart') {
                             // Update the image tag in the yaml file
-                            sh "sed -i 's|image: .*/frontend-ui:.*|image: eranlebovic/frontend-ui:v${BUILD_NUMBER}|' deployment.yaml"
+                            sh "sed -i 's|tag: \".*\"|tag: \"v${BUILD_NUMBER}\"|' values.yaml"
                             
                             // Commit the change
                             sh """
-                                git add deployment.yaml
+                                git add values.yaml
                                 git commit -m 'Update frontend image to v${BUILD_NUMBER} [skip ci]'
                             """
                             

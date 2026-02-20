@@ -1,0 +1,16 @@
+replicaCount: 3
+
+image:
+  repository: eranlebovic/backend-api
+  pullPolicy: Always
+  tag: "v9" # This tag will be overridden by Jenkins/GitOps
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 5000
+  loadBalancerClass: "tailscale"
+
+redis:
+  host: redis-service
+  port: 6379
