@@ -6,9 +6,9 @@ metadata:
 spec:
   selector:
     app: frontend-ui
-  type: NodePort
+  type: LoadBalancer
+  loadBalancerClass: tailscale
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodePort: 30002

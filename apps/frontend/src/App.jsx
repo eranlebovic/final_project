@@ -6,8 +6,8 @@ function App() {
   const [podName, setPodName] = useState('Loading...')
   const [error, setError] = useState(null)
 
-  // This matches your Kubernetes NodePort Service
-  const API_URL = "http://192.168.1.129:30001/api/counter"
+  // This matches your Tailscale DNS setup
+  const API_URL = "http://devops-backend/api/counter"
 
   const fetchCounter = () => {
     fetch(API_URL)

@@ -8,13 +8,11 @@ spec:
   selector:
     app: backend-api
   
-  # 2. Type: NodePort (Opens a specific port on EVERY worker node)
-  # Best Practice: In Prod, we use 'ClusterIP' + Ingress. 
-  # For this specific testing stage, NodePort is the quickest way to verify access.
-  type: NodePort
+  # 2. Type: LoadBalancer (integrates with Tailscale)
+  type: LoadBalancer
+  loadBalancerClass: tailscale
   
   ports:
     - protocol: TCP
       port: 80          # The port the Service listens on internally
       targetPort: 5000  # The port your Python Container listens on
-      nodePort: 30001   # The fixed port on your Worker Nodes (30000-32767)
