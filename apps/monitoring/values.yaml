@@ -44,12 +44,16 @@ grafana:
 alertmanager:
   enabled: true
   service:
-    type: LoadBalancer
-    port: 80
-    targetPort: 9093
-    annotations:
-      tailscale.com/hostname: "devops-alerts"
-    loadBalancerClass: "tailscale"
+    type: ClusterIP
+    port: 9093
+  ingress:
+    enabled: true
+    ingressClassName: tailscale
+    tls:
+    - hosts:
+      - devops-alerts
+    hosts:
+    - devops-alerts
   config:
     global:
       resolve_timeout: 5m
