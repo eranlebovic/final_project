@@ -3,7 +3,7 @@ replicaCount: 3
 image:
   repository: eranlebovic/backend-api
   pullPolicy: Always
-  tag: "v9" # This tag will be overridden by Jenkins/GitOps
+  tag: "v31" # This tag will be overridden by Jenkins/GitOps
 
 service:
   type: LoadBalancer
