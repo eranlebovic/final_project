@@ -43,6 +43,13 @@ grafana:
 
 alertmanager:
   enabled: true
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 9093
+    annotations:
+      tailscale.com/hostname: "devops-alerts"
+    loadBalancerClass: "tailscale"
   config:
     global:
       resolve_timeout: 5m
