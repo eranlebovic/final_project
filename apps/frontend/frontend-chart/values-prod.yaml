@@ -10,3 +10,5 @@ service:
   port: 80
   targetPort: 80
   loadBalancerClass: "tailscale"
+  annotations:
+    tailscale.com/hostname: "devops-frontend"

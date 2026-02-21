@@ -4,6 +4,10 @@ metadata:
   name: frontend-service
   labels:
     app: frontend-ui
+  {{- if .Values.service.annotations }}
+  annotations:
+    {{- toYaml .Values.service.annotations | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
   {{- if .Values.service.loadBalancerClass }}
