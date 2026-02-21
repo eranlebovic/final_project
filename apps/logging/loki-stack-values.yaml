@@ -2,7 +2,7 @@ loki:
   enabled: true
   isDefault: true
   persistence:
-    enabled: true
+    enabled: false
     size: 5Gi
   config:
     auth_enabled: false
