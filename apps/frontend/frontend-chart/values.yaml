@@ -3,7 +3,7 @@ replicaCount: 3
 image:
   repository: eranlebovic/frontend-ui
   pullPolicy: Always
-  tag: "v-broken-demo"
+  tag: "v410"
 
 service:
   type: LoadBalancer
