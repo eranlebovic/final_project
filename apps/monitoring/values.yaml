@@ -49,9 +49,6 @@ alertmanager:
   ingress:
     enabled: true
     ingressClassName: tailscale
-    tls:
-    - hosts:
-      - devops-alerts
     hosts:
     - devops-alerts
   config:
