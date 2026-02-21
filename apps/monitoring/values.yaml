@@ -21,6 +21,11 @@ prometheus:
 grafana:
   enabled: true
   adminPassword: "admin" # Change this in production or use an auto-generated secret
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki-stack.logging.svc.cluster.local:3100
+      access: proxy
   service:
     type: LoadBalancer
     port: 80
