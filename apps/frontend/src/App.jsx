@@ -7,8 +7,7 @@ function App() {
   const [error, setError] = useState(null)
 
   // This matches your Tailscale DNS setup
-  const API_URL = "http://devops-backend/api/counter"
-
+  const API_URL = "http://devops-backend.tail3b5424.ts.net/api/counter"
   const fetchCounter = () => {
     fetch(API_URL)
       .then(res => {
