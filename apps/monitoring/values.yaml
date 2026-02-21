@@ -59,7 +59,7 @@ alertmanager:
     receivers:
     - name: 'webhook-receiver'
       webhook_configs:
-      - url: 'https://webhook.site/placeholder-url-for-demo' # Dummy URL for demonstration
+      - url: 'https://webhook.site/22d61ec9-7b67-44cf-aa3d-c7bf9f429590'
   alertmanagerSpec:
     resources:
       requests:
