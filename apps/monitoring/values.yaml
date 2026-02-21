@@ -1,0 +1,48 @@
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    resources:
+      requests:
+        memory: 400Mi
+        cpu: 250m
+      limits:
+        memory: 1Gi
+        cpu: 500m
+  # Enable scraping of kubelet and cAdvisor natively
+  kubelet:
+    enabled: true
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+
+grafana:
+  enabled: true
+  adminPassword: "admin" # Change this in production or use an auto-generated secret
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 3000
+    annotations:
+      tailscale.com/hostname: "devops-monitoring"
+    loadBalancerClass: "tailscale"
+  resources:
+    requests:
+      memory: 100Mi
+      cpu: 100m
+    limits:
+      memory: 200Mi
+      cpu: 200m
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources:
+      requests:
+        memory: 50Mi
+        cpu: 50m
+      limits:
+        memory: 100Mi
+        cpu: 100m
