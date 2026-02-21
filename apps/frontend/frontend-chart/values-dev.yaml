@@ -3,7 +3,6 @@ replicaCount: 3
 image:
   repository: eranlebovic/frontend-ui
   pullPolicy: Always
-  tag: "v13"
 
 service:
   type: LoadBalancer
