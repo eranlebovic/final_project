@@ -30,6 +30,12 @@ Configuration management is handled at multiple levels ensuring consistency:
 - **Tailscale Mesh VPN**: Instead of exposing the cluster directly to the internet via public LoadBalancers, Tailscale is used to securely expose the internal services. The Kubernetes services use `loadBalancerClass: tailscale`, making them accessible only to authenticated devices on the private Tailnet.
 - **Shift-Left Security**: Integration of container image scanning and static analysis in the Jenkins pipeline (Work in Progress).
 
+## Monitoring and Logging (Bonus)
+The platform features a comprehensive observability stack deployed alongside the specific microservices:
+- **Prometheus & Grafana**: Collects and visualizes cluster metrics. Grafana is securely exposed via Tailscale (`http://devops-monitoring`).
+- **Loki & Promtail**: Implements a centralized log aggregation system for the entire cluster. Logs are queryable directly from Grafana.
+- **Alertmanager**: Configured with custom Prometheus rules (e.g., `InstanceDown`, `HighCPUUsage`, and `PodCrashLooping`). Alerts are routed to an external webhook receiver for real-time notifications, securely exposed via Tailscale (`http://devops-alerts`).
+
 ## Run Instructions
 
 ### Prerequisites
