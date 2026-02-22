@@ -14,3 +14,12 @@ service:
 redis:
   host: redis-service
   port: 6379
+
+rollout:
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {duration: 10s}
+        - setWeight: 50
+        - pause: {}

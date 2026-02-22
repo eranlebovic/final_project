@@ -1,0 +1,16 @@
+---
+- name: Install Argo Rollouts Controller
+  hosts: masters
+  become: yes
+  become_user: ubuntu
+  tasks:
+    - name: Create argo-rollouts namespace
+      command: kubectl create namespace argo-rollouts
+      register: namespace_create
+      failed_when: 
+        - namespace_create.rc != 0
+        - "'AlreadyExists' not in namespace_create.stderr"
+      changed_when: namespace_create.rc == 0
+
+    - name: Apply Argo Rollouts manifest
+      command: kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml

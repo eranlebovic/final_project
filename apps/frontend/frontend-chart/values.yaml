@@ -10,3 +10,12 @@ service:
   port: 80
   targetPort: 80
   loadBalancerClass: "tailscale"
+
+rollout:
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {duration: 10s}
+        - setWeight: 50
+        - pause: {}

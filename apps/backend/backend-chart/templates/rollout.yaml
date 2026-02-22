@@ -1,11 +1,13 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: backend-api
   labels:
     app: backend-api
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    {{- toYaml .Values.rollout.strategy | nindent 4 }}
   selector:
     matchLabels:
       app: backend-api

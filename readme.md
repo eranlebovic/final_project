@@ -59,3 +59,17 @@ The platform features a comprehensive observability stack deployed alongside the
 
 3. **Deploy Applications (GitOps)**:
    Once Argo CD is installed on the cluster, apply the `AppProject` and `Application` manifests from `apps/argocd/` to instruct Argo to track this repository and continuously deploy the `devops-dev` and `devops-prod` environments.
+
+### Demonstrations
+
+**Rollback Demo**: An interactive GitOps rollback script is included to quickly demonstrate ArgoCD's self-healing and synchronization features.
+1. Run `./rollback-demo.sh` from the repository root.
+2. The script will intentionally commit a broken image tag (`v-broken-demo`) to the Git repository.
+3. ArgoCD will deploy the broken manifest, and the pods will enter `ImagePullBackOff`.
+4. The script gives the prompt to automatically revert the Git commit to restore the healthy configuration, demonstrating a true GitOps rollback. Wait times account for disk I/O differences on HDD nodes.
+
+**Progressive Delivery (Canary) Demo**: Incorporates Argo Rollouts for advanced deployment strategies.
+1. Run `./rollout-demo.sh` from the repository root.
+2. The script updates the Helm values with a new image tag.
+3. Argo Rollouts gradually shifts traffic to the new version, automatically pausing at a 20% weight threshold.
+4. The user is prompted to manually promote the Rollout, fully scaling it to 100%.
