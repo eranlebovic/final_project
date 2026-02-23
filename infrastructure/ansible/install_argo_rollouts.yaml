@@ -14,3 +14,12 @@
 
     - name: Apply Argo Rollouts manifest
       command: kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
+    - name: Download kubectl-argo-rollouts plugin
+      become: yes
+      become_user: root
+      get_url:
+        url: https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+        dest: /usr/local/bin/kubectl-argo-rollouts
+        mode: '0755'
+        force: yes

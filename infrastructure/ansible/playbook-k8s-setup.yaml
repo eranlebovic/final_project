@@ -1,0 +1,4 @@
+---
+- import_playbook: install_k8s_dependencies.yaml
+- import_playbook: k8s_cluster_setup.yaml
+- import_playbook: install_argo_rollouts.yaml
