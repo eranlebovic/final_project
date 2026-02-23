@@ -3,7 +3,7 @@ replicaCount: 3
 image:
   repository: eranlebovic/frontend-ui
   pullPolicy: Always
-  tag: "v410"
+  tag: "v-canary-demo"
 
 service:
   type: LoadBalancer
