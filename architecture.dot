@@ -1,0 +1,35 @@
+digraph Architecture {
+    rankdir=LR;
+    nodesep=0.5;
+    ranksep=1.0;
+    node [shape=box, style=rounded, fontname=Helvetica];
+    edge [fontname=Helvetica, fontsize=10];
+
+    subgraph cluster_legend {
+        label="Flow Explanation";
+        style=dashed;
+        Explanation [shape=none, label="1. Dev pushes code (Dev commits to GitHub)\l2. CI builds & runs Trivy (Jenkins tests & scans)\l3. Push Image (Artifact uploaded to DockerHub)\l4. CI updates Git (Jenkins updates manifests)\l5. Argo CD detects & applies (Argo CD syncs cluster)\l6. Cluster pulls image (Nodes download image)\l7. User accesses via VPN (Traffic through Tailscale)\l8. Request flows FE -> Auth -> BE -> DB\l"];
+    }
+
+    subgraph cluster_flow {
+        label="";
+        style=invis;
+        
+        Developer -> GitHub [label="1. Push"];
+        GitHub -> Jenkins [label="2. Trigger"];
+        Jenkins -> Trivy [label="2. Scan"];
+        Trivy -> DockerHub [label="3. Push Image"];
+        Jenkins -> GitHub [label="4. Configure"];
+        
+        GitHub -> ArgoCD [label="5. Sync"];
+        ArgoCD -> KubeAPI [label="6. Apply"];
+        KubeAPI -> Worker [label="6. Update"];
+        DockerHub -> Worker [label="6. Pull"];
+        
+        User -> Tailscale [label="7. Connect"];
+        Tailscale -> Frontend [label="7. Route"];
+        Frontend -> Auth [label="8. Check"];
+        Auth -> Backend [label="9. Core Logic"];
+        Backend -> Redis [label="10. Store"];
+    }
+}

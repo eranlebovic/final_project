@@ -1,0 +1,103 @@
+digraph "Ultimate DevSecOps Platform Architecture" {
+	graph [bgcolor=white fontcolor="#2D3436" fontname="Sans-Serif" fontsize=22 label="Ultimate DevSecOps Platform Architecture" nodesep=0.4 pad=0.5 rankdir=LR ranksep=1.0 splines=spline]
+	node [fixedsize=true fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 height=1.4 imagescale=true labelloc=b shape=box style=rounded width=1.4]
+	edge [color="#7B8894"]
+	e598ead35f9d4efc9b6aafa3af483697 [label="User Traffic
+(7. Connects to app via VPN)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/network/internet.png" shape=none]
+	"6e1022203af5457ea88109b09c99ba37" [label="Tailscale Mesh
+(100.x.x.x)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/generic/network/vpn.png" shape=none]
+	subgraph "cluster_External Cloud" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="External Cloud" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		e713d07159424c9395c8ddb3e0e5431d [label="GitHub Repo
+(1. Developer Pushes Code)
+(4. CI Updates Manifests)" height=2.7 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/vcs/github.png" shape=none]
+		"1aaba43d3b6e4a419ca587d891fa3713" [label="Docker Hub
+(3. Built Image Uploaded)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/container/docker.png" shape=none]
+	}
+	subgraph "cluster_Home Network (192.168.1.x)" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="Home Network (192.168.1.x)" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		subgraph "cluster_Jump Host & IaC" {
+			graph [bgcolor="#EBF3E7" fontname="Sans-Serif" fontsize=12 label="Jump Host & IaC" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+			"4ba2033a4d1b44dfad0ed4bc8a82fb5b" [label="Jump Host
+192.168.1.244" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/compute/server.png" shape=none]
+			"29bfce2b7278464f85f8aafa9ed85807" [label=Terraform height=1.9 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/iac/terraform.png" shape=none]
+			"4a9e14438dd1465f879c6a356a163e13" [label=Ansible height=1.9 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/iac/ansible.png" shape=none]
+		}
+		subgraph "cluster_CI/CD Pipeline" {
+			graph [bgcolor="#EBF3E7" fontname="Sans-Serif" fontsize=12 label="CI/CD Pipeline" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+			"627ee84a466d456e82b2646747242019" [label="Jenkins CI
+(2. Builds app & triggers scan)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/ci/jenkins.png" shape=none]
+			"336e70e1a31b47a99bfc02fcff482888" [label="Trivy Scanner
+(Checks for vulnerabilities)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/security/trivy.png" shape=none]
+		}
+		subgraph "cluster_Proxmox K8s Cluster (v1.29)" {
+			graph [bgcolor="#EBF3E7" fontname="Sans-Serif" fontsize=12 label="Proxmox K8s Cluster (v1.29)" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+			e4414ff9c9a245359daf3a1f11fed99c [label="Tailscale Infra
+(Operator & Connectors)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/compute/pod.png" shape=none]
+			a45dd872718241c59afc02713bc642b8 [label="Argo CD
+(5. Detects Git change & syncs cluster)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/gitops/argocd.png" shape=none]
+			cda784f0122644efa52bac03b5b04e99 [label="Kube-API
+(6. Applies new config)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/controlplane/api.png" shape=none]
+			subgraph "cluster_Monitoring Cluster" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Monitoring Cluster" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				"87715b2505604e5987704d4173eeb602" [label=Prometheus height=1.9 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/monitoring/prometheus.png" shape=none]
+				"68d8b0efd66640c39522c8976b1c66ee" [label=Grafana height=1.9 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/monitoring/grafana.png" shape=none]
+			}
+			subgraph "cluster_Environments (devops-prod / devops-dev)" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Environments (devops-prod / devops-dev)" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				subgraph "cluster_Frontend Helm Chart" {
+					graph [bgcolor="#FDF7E3" fontname="Sans-Serif" fontsize=12 label="Frontend Helm Chart" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+					"5472fe76b94843d79b9c16f254baab00" [label="Frontend LB" height=1.9 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/network/svc.png" shape=none]
+					"9f1ffde3c1004800b29215d0592dd91b" [label="Frontend Pods
+(8. Receives user request)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/compute/rs.png" shape=none]
+				}
+				subgraph "cluster_Auth Service Helm Chart" {
+					graph [bgcolor="#FDF7E3" fontname="Sans-Serif" fontsize=12 label="Auth Service Helm Chart" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+					"479c48aef10945788ae8193a56be74f7" [label="Auth LB" height=1.9 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/network/svc.png" shape=none]
+					"7674dcb51b2e44238a22c5ce0fe6294b" [label="Auth Pods
+(9. Verifies user token)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/compute/rs.png" shape=none]
+				}
+				subgraph "cluster_Backend Helm Chart" {
+					graph [bgcolor="#FDF7E3" fontname="Sans-Serif" fontsize=12 label="Backend Helm Chart" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+					cced046ec81842f9ac8362a714bb3fc9 [label="Backend LB" height=1.9 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/network/svc.png" shape=none]
+					"929b84ddd15b4b2fa7bed54aeeb4b30d" [label="Backend Pods
+(10. Executes core logic)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/compute/rs.png" shape=none]
+					"688b62ae6b4f45a8b5cdb16905d1929f" [label="Redis DB
+(Reads/Writes data)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/onprem/inmemory/redis.png" shape=none]
+				}
+			}
+			subgraph "cluster_Worker Nodes" {
+				graph [bgcolor="#ECE8F6" fontname="Sans-Serif" fontsize=12 label="Worker Nodes" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+				"68e494be8142434cb483740ab89a21eb" [label="K8s Workers
+(Pulls container image)" height=2.3 image="/opt/final_project/venv/lib/python3.12/site-packages/resources/k8s/infra/node.png" shape=none]
+			}
+		}
+	}
+	"4ba2033a4d1b44dfad0ed4bc8a82fb5b" -> "29bfce2b7278464f85f8aafa9ed85807" [label=Provisions color=grey dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dotted]
+	"29bfce2b7278464f85f8aafa9ed85807" -> "68e494be8142434cb483740ab89a21eb" [label="Creates VMs" color=grey dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dotted]
+	"4ba2033a4d1b44dfad0ed4bc8a82fb5b" -> "4a9e14438dd1465f879c6a356a163e13" [label="Configures K8s" color=grey dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dashed]
+	"4a9e14438dd1465f879c6a356a163e13" -> cda784f0122644efa52bac03b5b04e99 [label=Bootstraps color=grey dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dashed]
+	e713d07159424c9395c8ddb3e0e5431d -> "627ee84a466d456e82b2646747242019" [label=1 color=firebrick dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"627ee84a466d456e82b2646747242019" -> "336e70e1a31b47a99bfc02fcff482888" [label=2 color=red dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"336e70e1a31b47a99bfc02fcff482888" -> "1aaba43d3b6e4a419ca587d891fa3713" [label="3. Push" color=firebrick dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"627ee84a466d456e82b2646747242019" -> e713d07159424c9395c8ddb3e0e5431d [label="4. Configure" color=firebrick dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	e713d07159424c9395c8ddb3e0e5431d -> a45dd872718241c59afc02713bc642b8 [label=5 color=darkgreen dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=bold]
+	a45dd872718241c59afc02713bc642b8 -> cda784f0122644efa52bac03b5b04e99 [label=6 color=darkgreen dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=bold]
+	"1aaba43d3b6e4a419ca587d891fa3713" -> "68e494be8142434cb483740ab89a21eb" [label=Pull color=orange dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dashed]
+	e598ead35f9d4efc9b6aafa3af483697 -> "6e1022203af5457ea88109b09c99ba37" [label=7 color=blue dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"6e1022203af5457ea88109b09c99ba37" -> "5472fe76b94843d79b9c16f254baab00" [color=blue dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"5472fe76b94843d79b9c16f254baab00" -> "9f1ffde3c1004800b29215d0592dd91b" [color=blue dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"9f1ffde3c1004800b29215d0592dd91b" -> "479c48aef10945788ae8193a56be74f7" [label=8 color=blue dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"479c48aef10945788ae8193a56be74f7" -> "7674dcb51b2e44238a22c5ce0fe6294b" [color=blue dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"7674dcb51b2e44238a22c5ce0fe6294b" -> cced046ec81842f9ac8362a714bb3fc9 [label=9 color=blue dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	cced046ec81842f9ac8362a714bb3fc9 -> "929b84ddd15b4b2fa7bed54aeeb4b30d" [color=blue dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"929b84ddd15b4b2fa7bed54aeeb4b30d" -> "688b62ae6b4f45a8b5cdb16905d1929f" [label=10 color=blue dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	e4414ff9c9a245359daf3a1f11fed99c -> "5472fe76b94843d79b9c16f254baab00" [label="Configures LB" color=purple dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dotted]
+	e4414ff9c9a245359daf3a1f11fed99c -> "479c48aef10945788ae8193a56be74f7" [color=purple dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dotted]
+	e4414ff9c9a245359daf3a1f11fed99c -> cced046ec81842f9ac8362a714bb3fc9 [color=purple dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dotted]
+	"4ba2033a4d1b44dfad0ed4bc8a82fb5b" -> "6e1022203af5457ea88109b09c99ba37" [label="Admin UI / CLI" color=grey dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"4ba2033a4d1b44dfad0ed4bc8a82fb5b" -> e4414ff9c9a245359daf3a1f11fed99c [label="Direct SSH" color=grey dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	e4414ff9c9a245359daf3a1f11fed99c -> "68e494be8142434cb483740ab89a21eb" [label="Routes to Node IPs" color=grey dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dotted]
+	"87715b2505604e5987704d4173eeb602" -> "68e494be8142434cb483740ab89a21eb" [label="Scrape Metrics" color=teal dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dotted]
+	"68d8b0efd66640c39522c8976b1c66ee" -> "87715b2505604e5987704d4173eeb602" [label="Query Metrics" color=teal dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 style=dotted]
+}

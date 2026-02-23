@@ -16,6 +16,9 @@ spec:
       labels:
         app: backend-api
     spec:
+      volumes:
+        - name: tmp
+          emptyDir: {}
       containers:
         - name: backend-api
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -24,6 +27,16 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           env:
             - name: REDIS_HOST
               valueFrom:

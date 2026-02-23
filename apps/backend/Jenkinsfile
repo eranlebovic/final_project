@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     echo "Scanning image ${DOCKER_IMAGE}:${IMAGE_TAG} for vulnerabilities..."
-                    sh "trivy image --severity HIGH,CRITICAL --no-progress ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                    sh "trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress ${DOCKER_IMAGE}:${IMAGE_TAG}"
                 }
             }
         }

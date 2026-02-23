@@ -11,10 +11,17 @@ RUN npm run build
 
 # STAGE 2: Production (Nginx)
 FROM nginx:alpine
-# Clean the default Nginx directory
-RUN rm -rf /usr/share/nginx/html/*
-# Copy the DIST folder from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
 
-EXPOSE 80
+# Configure nginx to run as non-root
+RUN rm -rf /usr/share/nginx/html/* && \
+    touch /var/run/nginx.pid && \
+    chown -R nginx:nginx /var/run/nginx.pid /usr/share/nginx/html /var/cache/nginx /var/log/nginx /etc/nginx/conf.d && \
+    sed -i 's/listen  *80;/listen 8080;/g' /etc/nginx/conf.d/default.conf
+
+# Copy the DIST folder from the build stage
+COPY --chown=nginx:nginx --from=build /app/dist /usr/share/nginx/html
+
+USER nginx
+
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]

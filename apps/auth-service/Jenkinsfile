@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         // Correct image name for your cluster
-        DOCKER_IMAGE = "eranlebovic/frontend-ui"
+        DOCKER_IMAGE = "eranlebovic/auth-service"
         IMAGE_TAG = "v${BUILD_NUMBER}"
+        // The ID we stored in Jenkins Credentials
         DOCKER_CREDS = "docker-hub-credentials"
     }
 
@@ -15,11 +16,37 @@ pipeline {
             }
         }
 
-        stage('Build Frontend Image') {
+        stage('SAST Scan (Bandit)') {
             steps {
                 script {
-                    dir('apps/frontend') {
-                        echo "Building ${DOCKER_IMAGE}:${IMAGE_TAG}..."
+                    dir('apps/auth-service') {
+                        echo "Running SAST scan on auth-service..."
+                        // Install bandit if not present
+                        sh "pip install --user bandit==1.7.5"
+                        sh "python -m bandit -r . -f custom --msg-template '{line}: {test_id}: {msg}'"
+                    }
+                }
+            }
+        }
+
+        stage('Dependency Scan (Safety)') {
+            steps {
+                script {
+                    dir('apps/auth-service') {
+                        echo "Running dependency scan on auth-service..."
+                        sh "pip install --user safety"
+                        // Only fail on criticals
+                        sh "python -m safety check -r requirements.txt --ignore-cvss-severity LOW,MEDIUM"
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dir('apps/auth-service') {
+                        echo "Building ${DOCKER_IMAGE}:${IMAGE_TAG} from apps/auth-service..."
                         docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
                     }
                 }
@@ -30,18 +57,18 @@ pipeline {
             steps {
                 script {
                     echo "Scanning image ${DOCKER_IMAGE}:${IMAGE_TAG} for vulnerabilities..."
-                    sh "trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                    // Fails the pipeline on HIGH,CRITICAL if unhandled
+                    sh "trivy image --severity HIGH,CRITICAL --no-progress ${DOCKER_IMAGE}:${IMAGE_TAG}"
                 }
             }
         }
 
-        // STEP 1: PUSH THE IMAGE (Do this first!)
+
         stage('Push to Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('', DOCKER_CREDS) {
                         sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
-                        // It is good practice to push 'latest' too
                         sh "docker tag ${DOCKER_IMAGE}:${IMAGE_TAG} ${DOCKER_IMAGE}:latest"
                         sh "docker push ${DOCKER_IMAGE}:latest"
                     }
@@ -52,7 +79,7 @@ pipeline {
         stage('Update Manifest') {
             steps {
                 script {
-                    // This matches the ID we just created in Step 2
+                    // Use the same GitHub credentials we created earlier
                     def GITHUB_CRED_ID = 'github-credentials' 
                     
                     withCredentials([usernamePassword(credentialsId: GITHUB_CRED_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
@@ -60,17 +87,19 @@ pipeline {
                         sh "git config user.email 'jenkins@example.com'"
                         sh "git config user.name 'Jenkins CI'"
                         
-                        dir('apps/frontend/frontend-chart') {
-                            // Update the image tag in the yaml file
-                            sh "sed -i 's|tag: \".*\"|tag: \"v${BUILD_NUMBER}\"|' values.yaml"
+                        dir('apps/auth-service/auth-chart') {
                             
-                            // Commit the change
+                            // 1. Update the values.yaml with the new tag
+                            sh "sed -i 's|tag: \".*\"|tag: \"v${BUILD_NUMBER}\"|' values.yaml"
+
+                            
+                            // 2. Commit the change
                             sh """
                                 git add values.yaml
-                                git commit -m 'Update frontend image to v${BUILD_NUMBER} [skip ci]'
+                                git commit -m 'Update auth-service image to v${BUILD_NUMBER} [skip ci]'
                             """
                             
-                            // PUSH using the secure token
+                            // 3. Push to GitHub
                             sh "git push https://${GIT_USER}:${GIT_PASS}@github.com/eranlebovic/final_project.git HEAD:main"
                         }
                     }

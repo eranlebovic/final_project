@@ -14,9 +14,23 @@ spec:
       labels:
         app: redis
     spec:
+      volumes:
+      - name: redis-data
+        emptyDir: {}
       containers:
       - name: redis
         image: redis:7.0-alpine
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        volumeMounts:
+          - name: redis-data
+            mountPath: /data
         ports:
         - containerPort: 6379
         # Security: Inject the password as an Environment Variable

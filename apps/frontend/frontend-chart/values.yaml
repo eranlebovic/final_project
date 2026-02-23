@@ -3,12 +3,12 @@ replicaCount: 3
 image:
   repository: eranlebovic/frontend-ui
   pullPolicy: Always
-  tag: "v-canary-demo"
+  tag: "v410"
 
 service:
   type: LoadBalancer
   port: 80
-  targetPort: 80
+  targetPort: 8080
   loadBalancerClass: "tailscale"
 
 rollout:
