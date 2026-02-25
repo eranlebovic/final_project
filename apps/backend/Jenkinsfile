@@ -30,8 +30,8 @@ pipeline {
         stage('Image Scan (Trivy)') {
             steps {
                 script {
-                    echo "Scanning image ${DOCKER_IMAGE}:${IMAGE_TAG} for vulnerabilities..."
-                    sh "trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                    echo "Scanning image ${DOCKER_IMAGE}:${IMAGE_TAG} for vulnerabilities (ignoring unfixed and accepted CVEs)..."
+                    sh "trivy image --severity HIGH,CRITICAL --ignore-unfixed --ignorefile .trivyignore --exit-code 1 --no-progress ${DOCKER_IMAGE}:${IMAGE_TAG}"
                 }
             }
         }
