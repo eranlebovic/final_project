@@ -2,6 +2,11 @@
 # Best Practice: Always pin the version (3.9-slim) to avoid breaking changes.
 FROM python:3.9-slim
 
+# Bring OS security patches (including OpenSSL/glibc) up to date
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/*
+
 # 2. Security: Create a non-root user
 # Best Practice: Never run containers as 'root'. If hacked, they can't damage the host.
 RUN groupadd -r appuser && useradd -r -g appuser appuser
