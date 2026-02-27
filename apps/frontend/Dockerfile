@@ -10,7 +10,7 @@ COPY . .
 RUN npm run build
 
 # STAGE 2: Production (Nginx)
-FROM nginx:3.23.3-alpine
+FROM nginx:alpine
 
 # Security: Upgrade OS packages to fix vulnerabilities (e.g., CVE-2026-25646)
 RUN apk update && apk upgrade --no-cache
