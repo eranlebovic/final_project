@@ -19,7 +19,7 @@ rollout:
   strategy:
     canary:
       steps:
-        - setWeight: 20
+        - setWeight: 10
         - pause: {duration: 10s}
         - setWeight: 50
-        - pause: {}
+        - pause: {duration: 10s}
