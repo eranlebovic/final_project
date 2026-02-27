@@ -11,22 +11,14 @@ venv/
 __pycache__/
 *.py[cod]
 
-# Diagrams / OS
-.DS_Store
-*.log# Ignore Terraform State & Secrets
-**/.terraform/*
-*.tfstate
-*.tfstate.backup
-*.tfvars
-.terraform.lock.hcl
-
-# Ignore SSH Keys
+# SSH Keys
 id_rsa_terraform
 *.pem
 
-# Ignore Ansible Retry Files
+# Ansible
 *.retry
 
-# Ignore OS files
+# OS / Misc
 .DS_Store
+*.log
 *.deb

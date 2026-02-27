@@ -4,7 +4,7 @@
 This project demonstrates a comprehensive, end-to-end DevSecOps platform built around microservices, Infrastructure as Code (IaC), GitOps, and robust security practices. The application consists of a React/Vite frontend and a Python backend interacting with a Redis database. The infrastructure is primarily deployed on a local Proxmox Kubernetes cluster (v1.29) utilizing Terraform and Ansible, with secure internal networking provided by Tailscale.
 
 ## Architecture Diagram
-![Architecture Diagram](./ultimate_devsecops_platform_architecture.png)
+![Architecture Diagram](./docs/diagram/ultimate_devsecops_platform_architecture.png)
 
 ## CI/CD Flow
 The CI/CD pipeline implements a strict separation between Continuous Integration (Jenkins) and Continuous Deployment (Argo CD).

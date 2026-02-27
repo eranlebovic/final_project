@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuration
-TARGET_DIR="/opt/final_project"
+TARGET_DIR="/opt/final_project/docs/diagram"
 WATCH_FILE="generate_architecture.py"
-VENV_PYTHON="$TARGET_DIR/venv/bin/python3"
+VENV_PYTHON="python3"
 
 echo "👀 Watcher started: Monitoring $WATCH_FILE..."
 

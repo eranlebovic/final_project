@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# 1. Enter the "Sandbox" (Virtual Environment)
-source venv/bin/activate
+
+# 1. Navigate to the diagram directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
 # 2. Run the Generator
 python3 generate_architecture.py

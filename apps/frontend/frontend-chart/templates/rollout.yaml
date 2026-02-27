@@ -16,6 +16,7 @@ spec:
       labels:
         app: frontend-ui
     spec:
+      serviceAccountName: frontend-sa
       containers:
         - name: frontend-ui
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

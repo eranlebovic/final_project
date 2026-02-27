@@ -16,6 +16,7 @@ spec:
       labels:
         app: backend-api
     spec:
+      serviceAccountName: backend-sa
       volumes:
         - name: tmp
           emptyDir: {}
