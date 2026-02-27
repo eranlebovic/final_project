@@ -11,10 +11,6 @@ spec:
   policyTypes:
   - Ingress
   ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: frontend-ui
-    ports:
+  - ports:
     - protocol: TCP
       port: {{ .Values.service.targetPort }}
